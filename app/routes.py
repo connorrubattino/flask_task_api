@@ -1,7 +1,7 @@
 from flask import request
-from . import app
+from . import app, db
 from datetime import datetime
-from fake_tasks.tasks import tasks_list
+from .models import Task
 
 
 #just a little message for the main page
@@ -14,18 +14,18 @@ def home():
 #get all tasks
 @app.route('/tasks')
 def get_tasks():
-    tasks = tasks_list
-    return tasks
+    tasks = db.session.execute(db.select(Task)).scalars().all()    
+    return [t.to_dict() for t in tasks]
 
 
 #get single task
 @app.route('/tasks/<int:task_id>')
 def get_task(task_id):
-    tasks = tasks_list
-    for task in tasks:
-        if task['id'] == task_id:
-            return task
-    return {'error': f"Task with an ID of {task_id} does not exist"}, 404
+    task = db.session.get(Task, task_id)
+    if task:
+        return task.to_dict()
+    else:
+        return {'error': f"Task with an ID of {task_id} does not exist"}, 404
 
 
 #WILL SET UP DB LATER BUT TO CHECK AS OF NOW
