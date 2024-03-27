@@ -28,10 +28,6 @@ def get_task(task_id):
         return {'error': f"Task with an ID of {task_id} does not exist"}, 404
 
 
-#WILL SET UP DB LATER BUT TO CHECK AS OF NOW
-tasks = []
-
-
 @app.route('/tasks', methods=['POST']) #make a post request by setting method
 def create_task():
     #check if JSON
@@ -48,8 +44,8 @@ def create_task():
     if missing_fields:
         return {'error': f"{', '.join(missing_fields)} must be in the request body"}, 400
     
-    title = data['title'] #title = data.get('title')
-    description = data['subscription']
+    title = data.get('title')
+    description = data.get('description')
 
 
     #not too much required info to check for and cant access ID yet
@@ -57,16 +53,8 @@ def create_task():
     #     if task['title'] == title or task['description'] == description:
     #         return {'error': "A task with that title and/or description already exists"}, 400
 
-    new_task = {
-        'id': len(tasks_list) + 1,
-        'title': title,
-        'description': description,
-        'completed': False,
-        'createdAt': datetime.utcnow(),
-        'dueDate': data.get('dueDate')
-    }
+    new_task = Task(title=title, description=description)
 
-    tasks_list.append(new_task)
 
-    return new_task, 201
+    return new_task.to_dict(), 201
     
