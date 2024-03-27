@@ -1,5 +1,6 @@
 from flask import request
 from . import app
+from datetime import datetime
 from fake_tasks.tasks import tasks_list
 
 
@@ -47,19 +48,22 @@ def create_task():
     if missing_fields:
         return {'error': f"{', '.join(missing_fields)} must be in the request body"}, 400
     
-    title = data.get('title')
-    description = data.get('subscription')
+    title = data['title'] #title = data.get('title')
+    description = data['subscription']
 
 
     #not too much required info to check for and cant access ID yet
-    for task in tasks:
-        if task['title'] == title or task['description'] == description:
-            return {'error': "A task with that title and/or description already exists"}, 400
+    # for task in tasks:
+    #     if task['title'] == title or task['description'] == description:
+    #         return {'error': "A task with that title and/or description already exists"}, 400
 
     new_task = {
         'id': len(tasks_list) + 1,
         'title': title,
-        'description': description
+        'description': description,
+        'completed': False,
+        'createdAt': datetime.utcnow(),
+        'dueDate': data.get('dueDate')
     }
 
     tasks_list.append(new_task)
