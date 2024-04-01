@@ -54,7 +54,7 @@ class User (db.Model):
             "dateCreated": self.date_created
         }
     
-    def update_user(self, **kwargs):
+    def update(self, **kwargs):
         allowed_fields = {'firstName', 'lastName', 'username', 'password'}
 
         for key, value in kwargs.items():
